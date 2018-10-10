@@ -103,6 +103,8 @@ class Target(object):
         if self.isfile():
             if str(self).lower().endswith(('.c')):
                 return 'c'
+            if str(self).lower().endswith(('.cpp')):
+                return 'cpp'
             if str(self).lower().endswith(('.f', '.f90', '.f77')):
                 return 'fortran'
         return None
