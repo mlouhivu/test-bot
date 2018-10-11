@@ -2,6 +2,7 @@ import subprocess
 import commands
 import os
 import time
+import itertools
 from manifest import Manifest
 from config import Config
 import execute
@@ -67,7 +68,48 @@ def build(target, family, output=None, link=True):
     post_log(target)
     return True
 
+def run_multiple(target):
+    pre_log(target, 'run multiple')
+    args = {'out': log}
+    args['export'] = target.as_tuple('export')
+    if target.mpi and target.omp:
+        args['tasks'] = config.mpi_tasks or 4
+        args['threads'] = config.omp_threads or 4
+    elif target.mpi:
+        args['tasks'] = config.mpi_tasks or 4
+    elif target.omp:
+        args['tasks'] = 1
+        args['threads'] = config.omp_threads or 4
+    if hasattr(target, 'user_input') and type(target.user_input) is tuple \
+            and (len(target.user_input) == len(target.binary)):
+        user_inputs = target.as_tuple('user_input')
+        log_line('Unique user input for each binary.')
+    else:
+        user_inputs = itertools.repeat(target.as_str('user_input'))
+        log_line('Single user input for all binaries.')
+    status = True
+    try:
+        for binary, user_input in zip(target.binary, user_inputs):
+            log_line('')
+            args['user_input'] = user_input
+            command = './' + binary
+            if hasattr(target, 'arguments'):
+                command += ' ' + target.arguments
+            if target.mpi and target.omp:
+                status = status and execute.parallel(command, **args)
+            elif target.mpi:
+                status = status and execute.parallel(command, **args)
+            elif target.omp:
+                status = status and execute.parallel(command, **args)
+            else:
+                status = status and execute.serial(command, **args)
+        return status
+    finally:
+        post_log(target)
+
 def run(target):
+    if hasattr(target, 'binary') and type(target.binary) is tuple:
+        return run_multiple(target)
     pre_log(target, 'run')
     command = './a.out'
     try:
