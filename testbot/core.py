@@ -30,6 +30,8 @@ def make(target):
         cmd = 'make -f ' + target.filename()
     else:
         cmd = 'make'
+    subprocess.call('make clean', stdout=log, stderr=subprocess.STDOUT,
+                    shell=True)
     pre = set([x for x in os.listdir('.') if os.path.isfile(x)])
     try:
         subprocess.check_call(cmd, stdout=log, stderr=subprocess.STDOUT,
