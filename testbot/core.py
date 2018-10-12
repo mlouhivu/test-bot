@@ -47,6 +47,7 @@ def make(target):
         binary = guess_binary(pre, post)
         if binary and not hasattr(target, 'binary'):
             target.binary = str(binary)
+            log_line('Guessed binary: {0}'.format(target.binary))
         return True
     except subprocess.CalledProcessError:
         return False
