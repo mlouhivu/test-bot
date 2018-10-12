@@ -25,14 +25,20 @@ def guess_binary(pre, post):
         return None
     return files[0]
 
+def make_clean(target):
+    if hasattr(target, 'makefile') and target.makefile:
+        cmd = 'make clean -f ' + target.filename()
+    else:
+        cmd = 'make clean'
+    subprocess.call(cmd, stdout=log, stderr=subprocess.STDOUT, shell=True)
+
 def make(target):
     pre_log(target, 'make')
+    make_clean(target)
     if hasattr(target, 'makefile') and target.makefile:
         cmd = 'make -f ' + target.filename()
     else:
         cmd = 'make'
-    subprocess.call('make clean', stdout=log, stderr=subprocess.STDOUT,
-                    shell=True)
     pre = set([x for x in os.listdir('.') if os.path.isfile(x)])
     try:
         subprocess.check_call(cmd, stdout=log, stderr=subprocess.STDOUT,
