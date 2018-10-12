@@ -41,7 +41,7 @@ class Compiler(BaseCompiler):
             self.options.append('-c')
 
     def compile(self, filename):
-        self(filename)
+        return self(filename)
 
 
 class Linker(BaseCompiler):
@@ -63,7 +63,7 @@ class Linker(BaseCompiler):
         return cmd + ' %s'
 
     def link(self, filename):
-        self(filename)
+        return self(filename)
 
     def add_library(self, library):
         if type(library) is not str:

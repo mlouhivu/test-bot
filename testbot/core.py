@@ -64,9 +64,10 @@ def build(target, family, output=None, link=True):
         cc.output = None
     cc.stdout = log
     cc.stderr = log
-    cc.compile(target.filename())
-    post_log(target)
-    return True
+    try:
+        return cc.compile(target.filename())
+    finally:
+        post_log(target)
 
 def run_multiple(target):
     pre_log(target, 'run multiple')
