@@ -1,11 +1,11 @@
 import subprocess
-import commands
 import os
 import time
 import itertools
-from manifest import Manifest
-from config import Config
-import execute
+
+from testbot.manifest import Manifest
+from testbot.config import Config
+from testbot import execute
 
 botdir = '.test'
 if os.path.exists(botdir):
@@ -171,6 +171,6 @@ def log_line(txt):
     log.flush()
 
 def log_modules():
-    status, out = commands.getstatusoutput('module list')
+    status, out = subprocess.getstatusoutput('module list')
     log_line('')
     log.write(out.rstrip('\n') + '\n')

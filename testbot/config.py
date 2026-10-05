@@ -1,10 +1,11 @@
 import re
 import os
 from copy import deepcopy
-from build import Compiler
-from build import Linker
 
-runner = 'aprun'
+from testbot.build import Compiler
+from testbot.build import Linker
+
+runner = 'srun'
 compute_node = True
 
 ro_block = re.compile('\[\s*(?P<name>[^]]+)\s*\](?P<definition>[^[]*)')
@@ -32,7 +33,7 @@ class Config(object):
 
     def read(self, filename):
         if not os.path.isfile(filename):
-            raise ValueError, 'File does not exist: %s' % str(filename)
+            raise ValueError('File does not exist: %s' % str(filename))
         self.__filename__ = filename
         with open(filename) as fp:
             txt = fp.read()
@@ -44,8 +45,8 @@ class Config(object):
             # find language / flavour specific arguments first ..
             languages = {}
             for m in ro_lang.finditer(section):
-                lang = m.group('language') or None
-                tags = tuple(sorted(ro_tag.findall(m.group('tags')))) or None
+                lang = m.group('language') or ''
+                tags = tuple(sorted(ro_tag.findall(m.group('tags')))) or ()
                 snippet = m.group('definition')
                 languages.setdefault(lang, {})
                 languages[lang][tags] = self.__find_args__(snippet)
@@ -74,8 +75,8 @@ class Config(object):
             for key in self.__builder__[family]:
                 for opt in ['compiler']:
                     if opt not in self.__builder__[family][key]:
-                        raise KeyError, 'Missing build option in ' \
-                                + '{0} {1}: {2}'.format(family, key, opt)
+                        raise KeyError('Missing build option in ' \
+                                + '{0} {1}: {2}'.format(family, key, opt))
 
     def __build_args__(self, family='gnu', language='c', flavours=None):
         key = (language,)
@@ -90,8 +91,8 @@ class Config(object):
             try:
                 return self.__build_args__(family, None, flavours)
             except ValueError:
-                raise ValueError, 'Unknown compiler: {0} {1} {2}'.format(
-                        family, language, flavours)
+                raise ValueError('Unknown compiler: {0} {1} {2}'.format(
+                        family, language, flavours))
 
     def compiler(self, family='gnu', language='c', flavours=None, link=True):
         args = self.__build_args__(family, language, flavours)

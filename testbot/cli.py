@@ -9,7 +9,8 @@ from argparse import ArgumentParser
 import logging
 import sys
 import os
-import core
+
+from testbot import core
 
 class MyParser(ArgumentParser):
     def error(self, message):

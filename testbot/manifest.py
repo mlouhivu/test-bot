@@ -1,7 +1,8 @@
 import os
 import re
-from target import Target
-import core
+
+from testbot.target import Target
+from testbot import core
 
 ro_target = re.compile('\[\s*(?P<target>[^]]+)\s*\](?P<definition>[^[]*)')
 ro_assign = re.compile('(?P<all>(?P<key>[a-zA-Z0-9_.-]+)='
@@ -57,7 +58,7 @@ class Manifest(object):
 
     def read(self, filename):
         if not os.path.isfile(filename):
-            raise ValueError, 'File does not exist: %s' % str(filename)
+            raise ValueError('File does not exist: %s' % str(filename))
         self.__filename__ = filename
         with open(filename) as fp:
             txt = fp.read()

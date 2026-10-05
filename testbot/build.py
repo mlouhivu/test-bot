@@ -1,5 +1,6 @@
 import subprocess
-import execute
+
+from testbot import execute
 
 class BaseCompiler(object):
     def __init__(self, command, options=None, output=None,
@@ -30,7 +31,7 @@ class BaseCompiler(object):
 
     def __call__(self, filename):
         cmd = self.invocation() % filename
-        return execute.serial(cmd, out=self.stdout, err=self.stderr)
+        return execute.serial(cmd, out=self.stdout, err=self.stderr, build=True)
 
 
 class Compiler(BaseCompiler):
@@ -67,7 +68,7 @@ class Linker(BaseCompiler):
 
     def add_library(self, library):
         if type(library) is not str:
-            raise TypeError, 'Library name should be given as a string.'
+            raise TypeError('Library name should be given as a string.')
         if library.startswith('-l'):
             self.libraries.append(library[2:])
         else:

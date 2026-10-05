@@ -1,5 +1,6 @@
 import os
-import core
+
+from testbot import core
 
 defaults = {
         'type': 'pass',
@@ -8,6 +9,8 @@ defaults = {
         'omp': False,
         }
 
+def _warn(msg):
+    print('Warning: {}'.format(msg))
 
 class Target(object):
     def __init__(self, path, **kwargs):
@@ -19,12 +22,11 @@ class Target(object):
 
     def setup(self, path):
         try:
-            if os.path.exists(path):
-                self.name = path
-            else:
-                raise ValueError, 'Target path does not exist: ' + repr(path)
+            if not os.path.exists(path):
+                _warn('Target path does not exist: ' + repr(path))
+            self.name = path
         except TypeError:
-            raise TypeError, 'Invalid target path: ' + repr(path)
+            raise TypeError('Invalid target path: ' + repr(path))
 
     def path(self):
         return os.path.join(core.basedir, self.name)
